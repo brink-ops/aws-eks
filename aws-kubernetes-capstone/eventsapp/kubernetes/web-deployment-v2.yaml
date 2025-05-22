@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: events-web
+  name: events-web-v2.0
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: events-web
+      ver: v2.0
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: events-web
+        ver: v2.0
+    spec:
+      containers:
+      - image: brinkops/events-website:v3.0
+        name: events-web
+        ports:
+        - containerPort: 8082
+        env:
+        - name: SERVER
+          value: "http://events-api-svc:8082"
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "100Mi"
+          limits:
+            cpu: "100m"
+            memory: "100Mi"
